@@ -15,9 +15,9 @@ util.inherits(WaitForClass, events.EventEmitter);
 WaitForClass.prototype.check = function(element, checkFn, timeout, callback) {
     var self = this;
 
-    this.api.getAttribute(element, 'class', function(result) {
+    this.api.getText(element, function(result) {
         var now = new Date().getTime();
-        if(result.status === 0 && checkFn(result.value.split(' '))) {
+        if(result.status === 0 && checkFn(result.value)) {
             return callback(true, now);
         } else if(now - self.startTime < timeout) {
             setTimeout(function() {
@@ -33,10 +33,10 @@ WaitForClass.prototype.check = function(element, checkFn, timeout, callback) {
 /**
  *
  * @param element - A lookup (xpath css etc) to the element we want to check
- * @param className - Name of the class to look for
+ * @param expectedValue - Name of the class to look for
  * @param timeout - Maximum number of milliseconds to wait
  */
-WaitForClass.prototype.command = function(element, className, timeout) {
+WaitForClass.prototype.command = function(element, expectedValue, timeout) {
     this.startTime = new Date().getTime();
     var self = this;
     var assertMessage = "";
@@ -46,25 +46,19 @@ WaitForClass.prototype.command = function(element, className, timeout) {
         timeout = this.api.globals.waitForConditionTimeout;
     }
 
-    var checkFn = function(classList) {
-        var i = classList.length;
-        while (i--) {
-            if (classList[i] == className) {
-                return true;
-            }
-        }
-        return false;
+    var checkFn = function(text) {
+        return text == targetText;
     };
 
     this.check(element, checkFn, timeout, function(result, timeCompleted) {
         if(result) {
-            assertMessage = "waitForClass: " + element + ". Expected class \"" + className + "\" was seen. Took " + (timeCompleted - self.startTime) + " ms.";
+            assertMessage = "waitForClass: " + element + ". Expected value \"" + expectedValue + "\" was seen. Took " + (timeCompleted - self.startTime) + " ms.";
         } else {
-            assertMessage = "waitForClass: " + element + ". Gave up waiting for the expected class \"" + className + "\" after " + timeout + " ms.";
+            assertMessage = "waitForClass: " + element + ". Gave up waiting for the expected value \"" + expectedValue + "\" after " + timeout + " ms.";
         }
 
         // Output
-        self.client.assertion(result, 'Failed', 'Finished', assertMessage, true);
+        self.client.assertion(result, 'Didn\'t see expected class', 'Saw expected class', assertMessage, true);
         // Complete fn
         self.emit('complete');
     }, timeout);
