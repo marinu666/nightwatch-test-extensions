@@ -33,7 +33,7 @@ WaitForText.prototype.check = function(element, checkFn, timeout, callback) {
 /**
  *
  * @param element - A lookup (xpath css etc) to the element we want to check
- * @param expectedValue - Name of the class to look for
+ * @param expectedValue - Value of the element that is expected
  * @param timeout - Maximum number of milliseconds to wait
  */
 WaitForText.prototype.command = function(element, expectedValue, timeout) {
