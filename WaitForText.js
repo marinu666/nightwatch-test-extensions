@@ -6,13 +6,13 @@ var events = require('events');
  * Wait for a specified element to load, and then wait until we find a class of the requested named
  *  attached to that element or fail if we hit a timeout
  */
-function WaitForClass() {
+function WaitForText() {
     events.EventEmitter.call(this);
     this.startTimeInMilliseconds = null;
 }
-util.inherits(WaitForClass, events.EventEmitter);
+util.inherits(WaitForText, events.EventEmitter);
 
-WaitForClass.prototype.check = function(element, checkFn, timeout, callback) {
+WaitForText.prototype.check = function(element, checkFn, timeout, callback) {
     var self = this;
 
     this.api.getText(element, function(result) {
@@ -36,7 +36,7 @@ WaitForClass.prototype.check = function(element, checkFn, timeout, callback) {
  * @param expectedValue - Name of the class to look for
  * @param timeout - Maximum number of milliseconds to wait
  */
-WaitForClass.prototype.command = function(element, expectedValue, timeout) {
+WaitForText.prototype.command = function(element, expectedValue, timeout) {
     this.startTime = new Date().getTime();
     var self = this;
     var assertMessage = "";
@@ -52,9 +52,9 @@ WaitForClass.prototype.command = function(element, expectedValue, timeout) {
 
     this.check(element, checkFn, timeout, function(result, timeCompleted) {
         if(result) {
-            assertMessage = "waitForClass: " + element + ". Expected value \"" + expectedValue + "\" was seen. Took " + (timeCompleted - self.startTime) + " ms.";
+            assertMessage = "waitForText: " + element + ". Expected value \"" + expectedValue + "\" was seen. Took " + (timeCompleted - self.startTime) + " ms.";
         } else {
-            assertMessage = "waitForClass: " + element + ". Gave up waiting for the expected value \"" + expectedValue + "\" after " + timeout + " ms.";
+            assertMessage = "waitForText: " + element + ". Gave up waiting for the expected value \"" + expectedValue + "\" after " + timeout + " ms.";
         }
 
         // Output
@@ -65,4 +65,4 @@ WaitForClass.prototype.command = function(element, expectedValue, timeout) {
 
 };
 
-module.exports = WaitForClass;
+module.exports = WaitForText;
