@@ -8,7 +8,7 @@ var events = require('events');
  */
 function WaitForClass() {
     events.EventEmitter.call(this);
-    this.startTimeInMilliseconds = null;
+    this.startTime = null;
 }
 util.inherits(WaitForClass, events.EventEmitter);
 
